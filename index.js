@@ -1,22 +1,72 @@
-var Excel = require('exceljs');
 
+var Excel = require('exceljs');
 var wb = new Excel.Workbook();
 var path = require('path');
 var filePath = path.resolve(__dirname,'EXCEL_FILE.xlsx');
 
-wb.xlsx.readFile(filePath).then(function(){
+async function file_read()
+{
+  data= await wb.xlsx.readFile(filePath).then(async function(){
 
     var sh = wb.getWorksheet("Sheet1");
-
     sh.getRow(1).getCell(2).value;
     wb.xlsx.writeFile("sample2.xlsx");
    // console.log("Row-3 | Cell-2 - "+sh.getRow(3).getCell(2).value);
 
     console.log(sh.rowCount);
     //Get all the rows data [1st and 2nd column]
-    //for(let x=0;x<3;x++)
-    for (i = 1; i <= sh.rowCount; i++) {
-        console.log(sh.getRow(i).getCell(1).value+" "+sh.getRow(i).getCell(2).value+" "+sh.getRow(i).getCell(3).value+" "+sh.getRow(i).getCell(4).value);
+   let name
+   let email
+   let sms
+    for (let i = 2; i <= sh.rowCount; i++) {
       
+         name=sh.getRow(i).getCell(2).value
+         email=sh.getRow(i).getCell(3).value
+         sms=sh.getRow(i).getCell(4).value
+       console.log(name+" "+email+" "+sms);
+       try {
+    
+        const ok=await emailsender(name,email,sms)
+        if(ok)
+        console.log("mail send");
+    } catch (error) {
+        console.log(error);
     }
+    }
+
 });
+}
+
+
+function emailsender(name,email,sms){
+    console.log("email");
+    let mailTransporter=nodemailer.createTransport({
+        service:"gmail",
+        host:"smtp.gmail.com",
+        port:587,//465
+        secure:false,
+        requireTLS:true,
+        auth:{
+            user:"ranaabobakarit@gmail.com",
+            pass:"enter mail password"
+        }
+    });
+const msg= "AOA\n rana g kya hal ha."
+let mailDetails={
+    from:"ranaabobakarit@gmail.com",
+    to:email,
+    subject:"RANA ABOBAKAR",
+    text:`AOA ${name}! \n ${sms}}`,
+}
+return mailTransporter.sendMail(mailDetails,(err,info)=>{
+    if(err)
+    console.log(err);
+    else
+    console.log("mail send");
+})
+}
+
+
+file_read()
+
+
