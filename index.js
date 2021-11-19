@@ -3,7 +3,7 @@ var Excel = require('exceljs');
 var wb = new Excel.Workbook();
 var path = require('path');
 var filePath = path.resolve(__dirname,'EXCEL_FILE.xlsx');
-
+const nodemailer=require('nodemailer')
 async function file_read()
 {
   data= await wb.xlsx.readFile(filePath).then(async function(){
@@ -11,10 +11,10 @@ async function file_read()
     var sh = wb.getWorksheet("Sheet1");
     sh.getRow(1).getCell(2).value;
     wb.xlsx.writeFile("sample2.xlsx");
-   // console.log("Row-3 | Cell-2 - "+sh.getRow(3).getCell(2).value);
+   
 
     console.log(sh.rowCount);
-    //Get all the rows data [1st and 2nd column]
+ 
    let name
    let email
    let sms
@@ -23,7 +23,7 @@ async function file_read()
          name=sh.getRow(i).getCell(2).value
          email=sh.getRow(i).getCell(3).value
          sms=sh.getRow(i).getCell(4).value
-       console.log(name+" "+email+" "+sms);
+    //   console.log(name+" "+email+" "+sms);
        try {
     
         const ok=await emailsender(name,email,sms)
@@ -39,7 +39,7 @@ async function file_read()
 
 
 function emailsender(name,email,sms){
-    console.log("email");
+
     let mailTransporter=nodemailer.createTransport({
         service:"gmail",
         host:"smtp.gmail.com",
@@ -48,7 +48,7 @@ function emailsender(name,email,sms){
         requireTLS:true,
         auth:{
             user:"ranaabobakarit@gmail.com",
-            pass:"enter mail password"
+            pass:"Enter Mail Password"
         }
     });
 const msg= "AOA\n rana g kya hal ha."
@@ -56,7 +56,7 @@ let mailDetails={
     from:"ranaabobakarit@gmail.com",
     to:email,
     subject:"RANA ABOBAKAR",
-    text:`AOA ${name}! \n ${sms}}`,
+    text:`AOA ${name}! \n ${sms}`,
 }
 return mailTransporter.sendMail(mailDetails,(err,info)=>{
     if(err)
